@@ -183,7 +183,7 @@ export const ArticlesHandler = createReactClass({
                 className={`button ${this.state.showArticlesEdited ? 'active' : ''}`}
                 onClick={() => this.toggleSection('showArticlesEdited')}
               >
-                Articles Edited
+                {I18n.t('articles.edited')}
               </button>
             </li>
             <li>
@@ -191,7 +191,7 @@ export const ArticlesHandler = createReactClass({
                 className={`button ${this.state.showAssignedArticles ? 'active' : ''}`}
                 onClick={() => this.toggleSection('showAssignedArticles')}
               >
-                Assigned Articles
+                {I18n.t('articles.assigned')}
               </button>
             </li>
             <li>
@@ -200,7 +200,7 @@ export const ArticlesHandler = createReactClass({
                 className={`button ${this.state.showAvailableArticles ? 'active' : ''}`}
                 onClick={() => this.toggleSection('showAvailableArticles')}
               >
-                { hasArticles ? 'Available Articles' : 'No Available Articles' }
+                {hasArticles ? I18n.t('articles.available') : I18n.t('articles.no_available') }
               </button>
             </li>
           </ul>

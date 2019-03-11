@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import createReactClass from 'create-react-class';
 import { connect } from 'react-redux';
+import qs from 'query-string';
 
 import ArticleList from './article_list.jsx';
 import AssignmentList from '../assignments/assignment_list.jsx';
@@ -29,11 +30,20 @@ export const ArticlesHandler = createReactClass({
   },
 
   getInitialState() {
-    return {
-      showArticlesEdited: true,
-      showAssignedArticles: false,
-      showAvailableArticles: false
-    };
+    const state = this._parseQueryString();
+
+    const hasTruthyValue = Object.values(state).some(val => val);
+    if (!hasTruthyValue) state.showArticlesEdited = true;
+
+    return state;
+  },
+
+  // eslint-disable-next-line react/sort-comp
+  _parseQueryString() {
+    const query = qs.parse(window.location.search);
+    return Object.entries(query).reduce((acc, [key, value]) => {
+      return { ...acc, [key]: value.toLowerCase() === 'true' };
+    }, {});
   },
 
   componentWillMount() {
@@ -61,10 +71,12 @@ export const ArticlesHandler = createReactClass({
     const state = {
       showArticlesEdited: false,
       showAssignedArticles: false,
-      showAvailableArticles: false
+      showAvailableArticles: false,
+      [key]: true
     };
 
-    this.setState({ ...state, [key]: true });
+    window.history.replaceState(null, null, `articles?${qs.stringify(state)}`);
+    this.setState(state);
   },
 
   showMore() {
@@ -160,6 +172,8 @@ export const ArticlesHandler = createReactClass({
       showMoreButton = <div><button className="button ghost stacked right" onClick={this.showMore}>{I18n.t('articles.see_more')}</button></div>;
     }
 
+    const hasArticles = !!this.props.assignments.length;
+
     return (
       <div className="articles-view">
         <nav>
@@ -182,10 +196,11 @@ export const ArticlesHandler = createReactClass({
             </li>
             <li>
               <button
+                disabled={!hasArticles}
                 className={`button ${this.state.showAvailableArticles ? 'active' : ''}`}
                 onClick={() => this.toggleSection('showAvailableArticles')}
               >
-                Available Articles
+                { hasArticles ? 'Available Articles' : 'No Available Articles' }
               </button>
             </li>
           </ul>
